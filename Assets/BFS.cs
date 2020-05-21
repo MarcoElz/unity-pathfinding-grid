@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-public class BFS 
+public class BFS : IPathFinder
 {
 
     Queue<Node> queue;
@@ -12,7 +12,7 @@ public class BFS
 
     Node exploringNode;
 
-    public Node[] FindPath(Node start, Node end)
+    public Node[] CalculatePath(Node start, Node end)
     {
 
         queue = new Queue<Node>();
@@ -35,7 +35,7 @@ public class BFS
             for (int i = 0; i < exploringNode.Neighbors.Length; i++)
             {
                 Node neighbor = exploringNode.Neighbors[i];
-                if(!exploredAndExploredFrom.ContainsKey(neighbor))
+                if(neighbor.IsVisitable && !exploredAndExploredFrom.ContainsKey(neighbor))
                 {
                     queue.Enqueue(neighbor);
                     exploredAndExploredFrom.Add(neighbor, exploringNode);
@@ -43,7 +43,7 @@ public class BFS
             }
         }
 
-        List<Node> path = new List<Node>();
+        path = new List<Node>();
         Node nextInPath = end;
         while(nextInPath != start)
         {
@@ -54,6 +54,11 @@ public class BFS
                 break;
         }
 
+        return path.ToArray();
+    }
+
+    public Node[] GetPath()
+    {
         return path.ToArray();
     }
 }
