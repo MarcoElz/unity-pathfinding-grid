@@ -5,13 +5,14 @@ using UnityEngine;
 public class GridGenerator : MonoBehaviour
 {
     [SerializeField] int gridSize = 10;
-    [SerializeField] GameObject tilePrefab;
+    [SerializeField] GameObject tilePrefab = default;
 
-    public Node[] lastPath;
+    public Vector2 GridSize { get { return grid != null ? new Vector2(grid.Length, grid[0].Length) : Vector2.zero; } }
+    
 
     private Node[][] grid;
 
-    private void Start()
+    public void GenerateGrid()
     {
         GenerateGrid(gridSize, gridSize);
     }
@@ -32,7 +33,7 @@ public class GridGenerator : MonoBehaviour
             {
                 Vector3 position = new Vector3(x, 0f, y);
                 GameObject tile = Instantiate(tilePrefab, position, Quaternion.identity);
-                grid[x][y] = tile.AddComponent<Node>();
+                grid[x][y] = tile.GetComponent<Node>();
                 tile.name = "Tile ("+x+", "+y+")";
             }
         }
@@ -46,10 +47,10 @@ public class GridGenerator : MonoBehaviour
                 List<Node> neighbors = new List<Node>();
 
                 //Check 4 sides
-                if (x - 1 >= 0) neighbors.Add(grid[x - 1][y]);
-                if (x + 1 < grid.Length) neighbors.Add(grid[x + 1][y]);
-                if (y - 1 >= 0) neighbors.Add(grid[x][y - 1]);
-                if (y + 1 < grid[x].Length) neighbors.Add(grid[x][y + 1]);
+                if (x - 1 >= 0 && grid[x - 1][y] != null) neighbors.Add(grid[x - 1][y]);
+                if (x + 1 < grid.Length && grid[x + 1][y] != null) neighbors.Add(grid[x + 1][y]);
+                if (y - 1 >= 0 && grid[x][y - 1] != null) neighbors.Add(grid[x][y - 1]);
+                if (y + 1 < grid[x].Length && grid[x][y + 1] != null) neighbors.Add(grid[x][y + 1]);
 
                 node.SetNeighbors(neighbors.ToArray());
             }
@@ -60,18 +61,5 @@ public class GridGenerator : MonoBehaviour
         Camera.main.orthographicSize = width > height ? width / 2f : height / 2f;
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            BFS pathFinder = new BFS();
-
-            int x = Random.Range(1, grid.Length);
-            int y = Random.Range(1, grid[x].Length);
-            Debug.Log("Find path to: " + x + ", " + y);
-
-            lastPath = pathFinder.FindPath(grid[0][0], grid[x][y]);
-
-        }
-    }
+    
 }
