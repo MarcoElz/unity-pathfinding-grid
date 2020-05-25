@@ -6,6 +6,7 @@ public class ColorNodeManager : MonoBehaviour
 {
     [SerializeField] Color unvisitableColor = Color.gray;
     [SerializeField] Color paintPathColor = Color.cyan;
+    [SerializeField] Color paintWaterColor = Color.blue;
     [SerializeField] Material tileMaterial = default;
 
     private Color visitableColor = Color.white;
@@ -15,13 +16,19 @@ public class ColorNodeManager : MonoBehaviour
         visitableColor = tileMaterial.color;
     }
 
-    public void PaintNodeType(Node node)
+    public void PaintNodeType(NodeBehaviour node)
     {
         if (node)
             node.GetComponentInChildren<MeshRenderer>().material.color = node.IsVisitable ? visitableColor : unvisitableColor;
     }
 
-    public void PaintPathNode(Node node)
+    public void PaintNodeWater(NodeBehaviour node)
+    {
+        if (node)
+            node.GetComponentInChildren<MeshRenderer>().material.color = paintWaterColor;
+    }
+
+    public void PaintPathNode(NodeBehaviour node)
     {
         if (node)
             node.GetComponentInChildren<MeshRenderer>().material.color = paintPathColor;

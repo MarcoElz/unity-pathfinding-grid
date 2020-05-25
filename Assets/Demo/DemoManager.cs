@@ -37,10 +37,10 @@ public class DemoManager : MonoBehaviour
         return !DraggableOnGrid.IsDraggingObject;
     }
 
-    private void ResetColors()
+    public void ResetColors()
     {
         ColorNodeManager colorManager = FindObjectOfType<ColorNodeManager>();
-        Node[] nodes = FindObjectsOfType<Node>();
+        NodeBehaviour[] nodes = FindObjectsOfType<NodeBehaviour>();
 
         for(int i = 0; i < nodes.Length; i++)
         {
@@ -50,7 +50,7 @@ public class DemoManager : MonoBehaviour
 
     private void ResetNodes()
     {
-        Node[] nodes = FindObjectsOfType<Node>();
+        NodeBehaviour[] nodes = FindObjectsOfType<NodeBehaviour>();
 
         for (int i = 0; i < nodes.Length; i++)
         {
@@ -58,7 +58,12 @@ public class DemoManager : MonoBehaviour
         }
     }
 
-    private IEnumerator PaintPath(Node[] path, float paintSpeed)
+    public void PaintPath(Node[] path, float paintSpeed)
+    {
+        StartCoroutine(PaintPathRoutine(path,paintSpeed));
+    }
+
+    private IEnumerator PaintPathRoutine(Node[] path, float paintSpeed)
     {
         ColorNodeManager colorManager = FindObjectOfType<ColorNodeManager>();
 
@@ -87,7 +92,7 @@ public class DemoManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            IPathFinder pathFinder = new BFS();
+            var pathFinder = new Dijkstra();
             
             Node start = null;
             Node end = null;
@@ -107,9 +112,12 @@ public class DemoManager : MonoBehaviour
             {
                 ResetColors();
 
-                lastPath = pathFinder.CalculatePath(start, end);
+                StartCoroutine(pathFinder.CalculatePath(start, end));
 
-                StartCoroutine(PaintPath(lastPath, paintTimeDelay));
+                if (lastPath.Length > 1)
+                    StartCoroutine(PaintPathRoutine(lastPath, paintTimeDelay));
+                else
+                    Debug.LogWarning("There is not any path connecting start and end nodes.");
             }
             else
             {
@@ -117,4 +125,5 @@ public class DemoManager : MonoBehaviour
             }
         }
     }
+
 }

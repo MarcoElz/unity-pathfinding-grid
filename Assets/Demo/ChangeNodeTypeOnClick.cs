@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum NodeDemoType { Empty = 0, Unpassable = 1, Water = 2 }
+
 public class ChangeNodeTypeOnClick : MonoBehaviour
 {
     [SerializeField] Node node = default;
+
+    private NodeDemoType type;
+
+    private void Start()
+    {
+        type = NodeDemoType.Empty;
+    }
 
     private void OnMouseDown()
     {
         if (!DemoManager.Instance.CanPaint())
             return;
 
-        node.SetVisitable(!node.IsVisitable);
-        FindObjectOfType<ColorNodeManager>().PaintNodeType(node);
+        ChangeType();
     }
 
     private void OnMouseEnter()
@@ -22,9 +30,39 @@ public class ChangeNodeTypeOnClick : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            node.SetVisitable(!node.IsVisitable);
-            FindObjectOfType<ColorNodeManager>().PaintNodeType(node);
+            ChangeType();
+        }
+    }
+
+    private void ChangeType()
+    {
+        int newType = (int)type + 1;
+
+        if (newType > 2)
+            newType = 0;
+
+        type = (NodeDemoType)newType;
+
+        switch(type)
+        {
+            case NodeDemoType.Empty:
+                node.SetVisitable(true);
+                node.SetWeight(1);
+                FindObjectOfType<ColorNodeManager>().PaintNodeType(node);
+                break;
+            case NodeDemoType.Unpassable:
+                node.SetVisitable(false);
+                node.SetWeight(int.MaxValue);
+                FindObjectOfType<ColorNodeManager>().PaintNodeType(node);
+                break;
+            case NodeDemoType.Water:
+                node.SetVisitable(true);
+                node.SetWeight(5);
+                FindObjectOfType<ColorNodeManager>().PaintNodeWater(node);
+                break;
         }
     }
 
 }
+
+

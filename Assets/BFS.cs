@@ -54,6 +54,8 @@ public class BFS : IPathFinder
                 break;
         }
 
+        path.Reverse();
+
         return path.ToArray();
     }
 
