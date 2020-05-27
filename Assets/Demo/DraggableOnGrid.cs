@@ -19,7 +19,7 @@ public class DraggableOnGrid : MonoBehaviour
         {
             if (hitInfo.collider.transform.parent != null)
             {
-                Node node = hitInfo.collider.transform.parent.GetComponent<Node>();
+                NodeBehaviour node = hitInfo.collider.transform.parent.GetComponent<NodeBehaviour>();
                 if (node != null && node.IsVisitable)
                 {
                     int x = Mathf.RoundToInt(node.transform.position.x);

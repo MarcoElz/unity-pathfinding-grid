@@ -1,7 +1,7 @@
 ﻿
 public interface IPathFinder
 {
-    Node[] GetPath();
-    Node[] CalculatePath(Node start, Node end);
+    INode[] GetPath();
+    INode[] CalculatePath(INode start, INode end);
     
 }

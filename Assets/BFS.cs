@@ -4,19 +4,19 @@ using System.Collections.Generic;
 public class BFS : IPathFinder
 {
 
-    Queue<Node> queue;
+    Queue<INode> queue;
 
-    List<Node> path;
+    List<INode> path;
 
-    Dictionary<Node, Node> exploredAndExploredFrom;
+    Dictionary<INode, INode> exploredAndExploredFrom;
 
-    Node exploringNode;
+    INode exploringINode;
 
-    public Node[] CalculatePath(Node start, Node end)
+    public INode[] CalculatePath(INode start, INode end)
     {
 
-        queue = new Queue<Node>();
-        exploredAndExploredFrom = new Dictionary<Node, Node>();
+        queue = new Queue<INode>();
+        exploredAndExploredFrom = new Dictionary<INode, INode>();
 
 
         queue.Enqueue(start);
@@ -24,27 +24,27 @@ public class BFS : IPathFinder
 
         while (queue.Count > 0)
         {
-            exploringNode = queue.Dequeue();
+            exploringINode = queue.Dequeue();
          
-            if(exploringNode.Equals(end))
+            if(exploringINode.Equals(end))
             {
                 //Debug.Log("End");
                 break;
             }
 
-            for (int i = 0; i < exploringNode.Neighbors.Length; i++)
+            for (int i = 0; i < exploringINode.Neighbors.Length; i++)
             {
-                Node neighbor = exploringNode.Neighbors[i];
+                INode neighbor = exploringINode.Neighbors[i];
                 if(neighbor.IsVisitable && !exploredAndExploredFrom.ContainsKey(neighbor))
                 {
                     queue.Enqueue(neighbor);
-                    exploredAndExploredFrom.Add(neighbor, exploringNode);
+                    exploredAndExploredFrom.Add(neighbor, exploringINode);
                 }
             }
         }
 
-        path = new List<Node>();
-        Node nextInPath = end;
+        path = new List<INode>();
+        INode nextInPath = end;
         while(nextInPath != start)
         {
             path.Add(nextInPath);
@@ -59,7 +59,7 @@ public class BFS : IPathFinder
         return path.ToArray();
     }
 
-    public Node[] GetPath()
+    public INode[] GetPath()
     {
         return path.ToArray();
     }

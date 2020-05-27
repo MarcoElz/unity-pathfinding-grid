@@ -10,7 +10,7 @@ public class GridGenerator : MonoBehaviour
     public Vector2 GridSize { get { return grid != null ? new Vector2(grid.Length, grid[0].Length) : Vector2.zero; } }
     
 
-    private Node[][] grid;
+    private INode[][] grid;
 
     public void GenerateGrid()
     {
@@ -20,10 +20,10 @@ public class GridGenerator : MonoBehaviour
     private void GenerateGrid(int width, int height)
     {
         //Generate matrix
-        grid = new Node[width][];
+        grid = new INode[width][];
         for(int i = 0; i < grid.Length; i++)
         {
-            grid[i] = new Node[height];
+            grid[i] = new INode[height];
         }
 
         //Generate objects
@@ -33,7 +33,7 @@ public class GridGenerator : MonoBehaviour
             {
                 Vector3 position = new Vector3(x, 0f, y);
                 GameObject tile = Instantiate(tilePrefab, position, Quaternion.identity);
-                grid[x][y] = tile.GetComponent<Node>();
+                grid[x][y] = tile.GetComponent<INode>();
                 tile.name = "Tile ("+x+", "+y+")";
             }
         }
@@ -43,8 +43,8 @@ public class GridGenerator : MonoBehaviour
         {
             for (int y = 0; y < grid[x].Length; y++)
             {
-                Node node = grid[x][y];
-                List<Node> neighbors = new List<Node>();
+                INode node = grid[x][y];
+                List<INode> neighbors = new List<INode>();
 
                 //Check 4 sides
                 if (x - 1 >= 0 && grid[x - 1][y] != null) neighbors.Add(grid[x - 1][y]);

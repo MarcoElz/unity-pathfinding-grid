@@ -3,13 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathfinderNode : IComparable<Node>
+public class PathfinderNode : IComparable<PathfinderNode>
 {
-    private Node node;
+    public INode node;
+    public int Cost { get; set; }
 
-    public int CompareTo(Node other)
+    public PathfinderNode(INode node)
+    {
+        this.node = node;
+    }
+
+    public int CompareTo(PathfinderNode other)
     {
         if (other == null) return 1;
-        return this.cost.CompareTo(other.cost);
+        return this.Cost.CompareTo(other.Cost);
     }
 }

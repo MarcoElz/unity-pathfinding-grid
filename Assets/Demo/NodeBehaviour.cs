@@ -3,17 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: RECONNECT ALL...
-public class NodeBehaviour : MonoBehaviour
+public class NodeBehaviour : MonoBehaviour, INode
 {
-    public Node Node { get; private set; }
+    public int Weight { get; private set; }
+
+    public Vector3 Position { get; private set; }
+
+    public bool IsVisitable { get; private set; }
+
+    public INode[] Neighbors { get; private set; }
 
     private void Awake()
     {
-        Node = new Node(this.transform.position, true, 1);
     }
 
     public void SetVisitable(bool visitable)
     {
-        Node.SetVisitable(visitable);
+        IsVisitable = visitable;
+    }
+
+    public void SetNeighbors(params INode[] neighbors)
+    {
+        this.Neighbors = neighbors;
+    }
+
+    public void SetWeight(int value)
+    {
+        this.Weight = value;
     }
 }

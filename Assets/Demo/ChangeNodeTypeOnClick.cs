@@ -6,7 +6,7 @@ public enum NodeDemoType { Empty = 0, Unpassable = 1, Water = 2 }
 
 public class ChangeNodeTypeOnClick : MonoBehaviour
 {
-    [SerializeField] Node node = default;
+    [SerializeField] NodeBehaviour node = default;
 
     private NodeDemoType type;
 
@@ -34,16 +34,9 @@ public class ChangeNodeTypeOnClick : MonoBehaviour
         }
     }
 
-    private void ChangeType()
+    public void Recolor()
     {
-        int newType = (int)type + 1;
-
-        if (newType > 2)
-            newType = 0;
-
-        type = (NodeDemoType)newType;
-
-        switch(type)
+        switch (type)
         {
             case NodeDemoType.Empty:
                 node.SetVisitable(true);
@@ -61,6 +54,18 @@ public class ChangeNodeTypeOnClick : MonoBehaviour
                 FindObjectOfType<ColorNodeManager>().PaintNodeWater(node);
                 break;
         }
+    }
+
+    private void ChangeType()
+    {
+        int newType = (int)type + 1;
+
+        if (newType > 2)
+            newType = 0;
+
+        type = (NodeDemoType)newType;
+        Recolor();
+        
     }
 
 }

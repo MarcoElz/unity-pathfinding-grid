@@ -3,25 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO: Create a new PathNode class to mantain all things related to the constructions
+//TODO: Create a new PathINode class to mantain all things related to the constructions
 
-public class Dijkstra 
+public class Dijkstra : IPathFinder
 {
+    Dictionary<INode, PathfinderNode> nodes;
 
-    MinHeap<Node> queue;
-    List<Node> path;
+    MinHeap<PathfinderNode> queue;
+    List<INode> path;
 
-    Dictionary<Node, Connection> exploration;
+    Dictionary<PathfinderNode, PathfinderNode> exploration; //Node, fromNode
 
-    Node exploringNode;
+    PathfinderNode exploringNode;
 
-    public IEnumerator CalculatePath(Node start, Node end)
+    public INode[] CalculatePath(INode start, INode end)
     {
-        queue = new MinHeap<Node>();
-        exploration = new Dictionary<Node, Connection>();
+        nodes = new Dictionary<INode, PathfinderNode>();
+        queue = new MinHeap<PathfinderNode>();
+        exploration = new Dictionary<PathfinderNode, PathfinderNode>();
 
-        queue.Insert(start);
-        exploration.Add(start, new Connection(start,start,0));
+        PathfinderNode startNode = new PathfinderNode(start);
+        startNode.Cost = int.MaxValue;
+        nodes.Add(start, startNode);
+
+        queue.Insert(startNode);
+        exploration.Add(startNode, startNode);
 
         while (queue.Count > 0)
         {
@@ -33,72 +39,75 @@ public class Dijkstra
                 break;
             }
 
-            for (int i = 0; i < exploringNode.Neighbors.Length; i++)
+            for (int i = 0; i < exploringNode.node.Neighbors.Length; i++)
             {
-                Node neighbor = exploringNode.Neighbors[i];
-
-                int cost = exploration[exploringNode].cost + neighbor.Weight;
+                INode neighbor = exploringNode.node.Neighbors[i];  
 
                 if (neighbor.IsVisitable)
                 {
-                    if(!exploration.ContainsKey(neighbor))
+                    PathfinderNode neighborNode = default;// new PathfinderNode(neighbor);
+
+                    if (nodes.ContainsKey(neighbor))
                     {
-                        queue.Insert(neighbor);
-                        exploration.Add(neighbor, new Connection(exploringNode, neighbor, cost));
-                        neighbor.cost = cost;
+                        neighborNode = nodes[neighbor];
                     }
                     else
                     {
-                        if (cost < exploration[neighbor].cost)
+                        neighborNode = new PathfinderNode(neighbor);
+                        neighborNode.Cost = int.MaxValue;
+                        nodes.Add(neighbor, neighborNode);
+                    }
+
+                    int cost = exploringNode.Cost + neighbor.Weight;
+
+                    if (!exploration.ContainsKey(neighborNode))
+                    {
+                        queue.Insert(neighborNode);
+                        exploration.Add(neighborNode, exploringNode);
+                        neighborNode.Cost = cost;
+                    }
+                    else
+                    {
+                        if (cost < exploration[neighborNode].Cost)
                         {
-                            exploration[neighbor] = new Connection(exploringNode, neighbor, cost);
-                            neighbor.cost = cost;
+                            exploration[neighborNode] = exploringNode;
+                            neighborNode.Cost = cost;
                         }
                     }
                 }
-
-                GameObject.FindObjectOfType<ColorNodeManager>().PaintPathNode(neighbor);
-                yield return null;
+                //GameObject.FindObjectOfType<ColorNodeManager>().PaintPathNode((NodeBehaviour)neighbor);
+                //yield return null;
             }
-            //GameObject.FindObjectOfType<DemoManager>().ResetColors();
+            //yield return null;
         }
 
-        path = new List<Node>();
-        Node nextInPath = end;
-        while (nextInPath != start)
+        path = new List<INode>();
+
+        if(nodes.ContainsKey(end))
         {
-            path.Add(nextInPath);
-            if (exploration.ContainsKey(nextInPath))
-                nextInPath = exploration[nextInPath].from;
-            else
-                break;
-        }
+            PathfinderNode nextInPathNode = nodes[end];
 
-        path.Reverse();
+            while (nextInPathNode != startNode)
+            {
+                path.Add(nextInPathNode.node);
+                if (exploration.ContainsKey(nextInPathNode))
+                    nextInPathNode = exploration[nextInPathNode];
+                else
+                    break;
 
-        //return path.ToArray();
-        GameObject.FindObjectOfType<DemoManager>().ResetColors();
-        GameObject.FindObjectOfType<DemoManager>().PaintPath(path.ToArray(), 0.25f);
+                //yield return null;
+            }
+            path.Reverse();
+        }    
+
+        return path.ToArray();
+        //GameObject.FindObjectOfType<DemoManager>().ResetColors();
+        //GameObject.FindObjectOfType<DemoManager>().PaintPath(path.ToArray(), 0.25f);
 
     }
 
-    public Node[] GetPath()
+    public INode[] GetPath()
     {
         return path.ToArray();
-    }
-}
-
-
-public struct Connection
-{
-    public Node from;
-    public Node to;
-    public int cost;
-
-    public Connection(Node from, Node to, int cost)
-    {
-        this.from = from;
-        this.to = to;
-        this.cost = cost;
     }
 }

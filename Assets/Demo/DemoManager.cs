@@ -9,7 +9,7 @@ public class DemoManager : MonoBehaviour
 
     [SerializeField] float paintTimeDelay = 0.2f;
 
-    public Node[] lastPath;
+    public INode[] lastPath;
 
     private GridGenerator gridGenerator;
 
@@ -30,6 +30,9 @@ public class DemoManager : MonoBehaviour
 
         startPoint.position = new Vector3(0f, 0.5f, 0f);
         endPoint.position = new Vector3(gridGenerator.GridSize.x - 1f, 0.5f, gridGenerator.GridSize.y - 1f);
+
+        ResetNodes();
+        ResetColors();
     }
 
     public bool CanPaint()
@@ -39,12 +42,11 @@ public class DemoManager : MonoBehaviour
 
     public void ResetColors()
     {
-        ColorNodeManager colorManager = FindObjectOfType<ColorNodeManager>();
         NodeBehaviour[] nodes = FindObjectsOfType<NodeBehaviour>();
 
         for(int i = 0; i < nodes.Length; i++)
         {
-            colorManager.PaintNodeType(nodes[i]);
+            nodes[i].GetComponentInChildren<ChangeNodeTypeOnClick>().Recolor();
         }
     }
 
@@ -55,15 +57,16 @@ public class DemoManager : MonoBehaviour
         for (int i = 0; i < nodes.Length; i++)
         {
             nodes[i].SetVisitable(true);
+            nodes[i].SetWeight(1);
         }
     }
 
-    public void PaintPath(Node[] path, float paintSpeed)
+    public void PaintPath(INode[] path, float paintSpeed)
     {
-        StartCoroutine(PaintPathRoutine(path,paintSpeed));
+        StartCoroutine(PaintPathRoutine(path, paintSpeed));
     }
 
-    private IEnumerator PaintPathRoutine(Node[] path, float paintSpeed)
+    private IEnumerator PaintPathRoutine(INode[] path, float paintSpeed)
     {
         ColorNodeManager colorManager = FindObjectOfType<ColorNodeManager>();
 
@@ -71,7 +74,8 @@ public class DemoManager : MonoBehaviour
 
         for(int i = 0; i < path.Length; i++)
         {
-            colorManager.PaintPathNode(path[i]);
+            if(path[i] is NodeBehaviour)
+                colorManager.PaintPathNode((NodeBehaviour) path[i]);
             yield return waitPaint;
         }
     }
@@ -94,27 +98,27 @@ public class DemoManager : MonoBehaviour
         {
             var pathFinder = new Dijkstra();
             
-            Node start = null;
-            Node end = null;
+            NodeBehaviour start = null;
+            NodeBehaviour end = null;
 
             RaycastHit hitInfo;
 
             if(Physics.Raycast(startPoint.position, Vector3.down, out hitInfo, Mathf.Infinity))
             {
-                start = hitInfo.collider.transform.parent.GetComponent<Node>();             
+                start = hitInfo.collider.transform.parent.GetComponent<NodeBehaviour>();             
             }
             if (Physics.Raycast(endPoint.position, Vector3.down, out hitInfo, Mathf.Infinity))
             {
-                end = hitInfo.collider.transform.parent.GetComponent<Node>();
+                end = hitInfo.collider.transform.parent.GetComponent<NodeBehaviour>();
             }
 
             if(start != null && end != null)
             {
                 ResetColors();
+                lastPath = pathFinder.CalculatePath(start, end);
+                //StartCoroutine(pathFinder.CalculatePath(start, end));
 
-                StartCoroutine(pathFinder.CalculatePath(start, end));
-
-                if (lastPath.Length > 1)
+                if (lastPath != null && lastPath.Length > 1)
                     StartCoroutine(PaintPathRoutine(lastPath, paintTimeDelay));
                 else
                     Debug.LogWarning("There is not any path connecting start and end nodes.");
