@@ -16,7 +16,7 @@ namespace Ignita.Pathfinding
         /// <summary>
         /// The cost of the path up to this node
         /// </summary>
-        public int Cost { get; set; }
+        public float Cost { get; set; }
 
         public PathfinderNode(INode node)
         {

@@ -1,13 +1,14 @@
 ﻿using Roy_T.AStar.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Ignita.Pathfinding
 {
     /// <summary>
-    /// Dijkstra pathfinding algorithm
-    /// https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+    /// Greedy Breadth First Search pathfinding algorithm
+    /// https://en.wikipedia.org/wiki/Best-first_search#Greedy_BFS
     /// </summary>
-    public class Dijkstra : IPathFinder
+    public class GreedyBFS : IPathFinder
     {
         List<INode> path; //The path that is calculated
         MinHeap<PathfinderNode> frontier; //Priority Queue that stores the next nodes to explored (but with priority)
@@ -15,7 +16,7 @@ namespace Ignita.Pathfinding
 
         Dictionary<INode, PathfinderNode> nodes; //Get the PathfinderNode for each INode
 
-        public Dijkstra()
+        public GreedyBFS()
         {
             //Initialize data structures
             frontier = new MinHeap<PathfinderNode>();
@@ -32,8 +33,8 @@ namespace Ignita.Pathfinding
         public INode[] GetPath() { return path.ToArray(); }
 
         /// <summary>
-        /// Using Dijkstra algorithm finds the path from start node to the end node.
-        /// It uses the weight of the nodes to find the best path
+        /// Using Greedy BFS algorithm finds the path from start node to the end node.
+        /// The "greedy" part uses Euclidian distance as the priority to explore
         /// </summary>
         /// <param name="start">The first node to start the search</param>
         /// <param name="end">The goal node that want to be found from start</param>
@@ -60,23 +61,13 @@ namespace Ignita.Pathfinding
                     {
                         PathfinderNode neighborNode = GetPathfinderNode(neighbor);
 
-                        float cost = exploringNode.Cost + neighbor.Weight;
-
                         if (!exploration.ContainsKey(neighborNode)) //If is the first time to be explored
                         {
+                            float priority = EuclidianDistance(neighbor, end);
+                            neighborNode.Cost = priority;
                             frontier.Insert(neighborNode);
                             exploration.Add(neighborNode, exploringNode); //Add: neighborNode explored from exploringNode
-                            neighborNode.Cost = cost;
-                        }
-                        else //Already explored
-                        { //Compares if this path cost less
-                            if (cost < exploration[neighborNode].Cost)
-                            {
-                                //Change the previous connection, so that neighbor now came from exploringNode
-                                exploration[neighborNode] = exploringNode;
-                                neighborNode.Cost = cost;
-                            }
-                        }
+                        }                        
                     }
                 }
             }
@@ -102,6 +93,15 @@ namespace Ignita.Pathfinding
             return path.ToArray();
         }
 
+        private float ManhattanDistance(INode node, INode goal)
+        {
+            return Mathf.Abs(node.Position.x - goal.Position.x) + Mathf.Abs(node.Position.y - goal.Position.y);
+        }
+
+        private float EuclidianDistance(INode node, INode goal)
+        {
+            return (node.Position - goal.Position).sqrMagnitude;
+        }
 
         private PathfinderNode GetPathfinderNode(INode node)
         {

@@ -50,10 +50,10 @@ namespace Ignita.Pathfinding.Demo
                     List<INode> neighbors = new List<INode>();
 
                     //Check 4 sides
-                    if (x - 1 >= 0 && grid[x - 1][y] != null) neighbors.Add(grid[x - 1][y]);
+                    if (y + 1 < grid[x].Length && grid[x][y + 1] != null) neighbors.Add(grid[x][y + 1]);
                     if (x + 1 < grid.Length && grid[x + 1][y] != null) neighbors.Add(grid[x + 1][y]);
                     if (y - 1 >= 0 && grid[x][y - 1] != null) neighbors.Add(grid[x][y - 1]);
-                    if (y + 1 < grid[x].Length && grid[x][y + 1] != null) neighbors.Add(grid[x][y + 1]);
+                    if (x - 1 >= 0 && grid[x - 1][y] != null) neighbors.Add(grid[x - 1][y]);
 
                     node.SetNeighbors(neighbors.ToArray());
                 }
