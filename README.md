@@ -28,14 +28,14 @@ public class NodeBehaviour : MonoBehaviour, INode
 
 #### Pathfinder
 The pathfinder algorithm to calculate the path.
-You can use BFS, GreedyBFS, or Dijkstra.
+You can use the IPathFinder classes: BFS, GreedyBFS, Dijkstra, AStar.
 ```C#
 using Ignita.Pathfinding;
 
 // ...
 
 //Create path finder object
-//You can use: BFS, GreedyBFS, Dijkstra.
+//You can use: BFS, GreedyBFS, Dijkstra, AStar.
 IPathFinder pathFinder = new BFS();
 
 //Start the algorithim
@@ -48,7 +48,7 @@ You can check the included demo scene for more details.
 - [x] Breadth First Search (BFS)
 - [x] Greedy BFS
 - [x] Dijkstra
-- [ ] A*
+- [x] A*
 
 ## Credits
 Thanks to [Roy Triesscheijn (roy-t)](https://github.com/roy-t "Roy Triesscheijn(roy-t) profile") for his great **MinHeap Collection** from his [AStart repo (check it out!)](https://github.com/roy-t/AStar "Roy-T.AStar repo")
