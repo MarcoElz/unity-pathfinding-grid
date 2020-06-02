@@ -18,16 +18,21 @@ namespace Ignita.Pathfinding
         /// </summary>
         public float Cost { get; set; }
 
+        /// <summary>
+        /// A value that represents the result of some heuristic operation, 
+        /// for example, the euclidian distance from this node to the goal
+        /// </summary>
+        public float HeuristicValue { get; set; }
+
         public PathfinderNode(INode node)
         {
             this.Node = node;
-            Cost = int.MaxValue;
         }
 
         public int CompareTo(PathfinderNode other)
         {
             if (other == null) return 1;
-            return this.Cost.CompareTo(other.Cost);
+            return (Cost+HeuristicValue).CompareTo(other.Cost + other.HeuristicValue);
         }
     }
 }

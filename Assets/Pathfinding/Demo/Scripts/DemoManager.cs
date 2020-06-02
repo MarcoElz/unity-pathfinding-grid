@@ -39,7 +39,7 @@ namespace Ignita.Pathfinding.Demo
 
         public void StartPathfinding()
         {
-            IPathFinder pathFinder = new Dijkstra();
+            IPathFinder pathFinder = new AStar();
 
             NodeBehaviour start = null;
             NodeBehaviour end = null;

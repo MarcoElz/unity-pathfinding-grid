@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace Ignita.Pathfinding
 {
     /// <summary>
-    /// Dijkstra pathfinding algorithm
-    /// https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+    /// A* search pathfinding algorithm
+    /// https://en.wikipedia.org/wiki/A*_search_algorithm
     /// </summary>
-    public class Dijkstra : IPathFinder
+    public class AStar : IPathFinder
     {
         List<INode> path; //The path that is calculated
         MinHeap<PathfinderNode> frontier; //Priority Queue that stores the next nodes to explored (but with priority)
@@ -15,7 +15,7 @@ namespace Ignita.Pathfinding
 
         Dictionary<INode, PathfinderNode> nodes; //Get the PathfinderNode for each INode
 
-        public Dijkstra()
+        public AStar()
         {
             //Initialize data structures
             frontier = new MinHeap<PathfinderNode>();
@@ -32,8 +32,9 @@ namespace Ignita.Pathfinding
         public INode[] GetPath() { return path.ToArray(); }
 
         /// <summary>
-        /// Using Dijkstra algorithm to find the path from start node to the end node.
-        /// It uses the weight of the nodes to find the best path
+        /// Using A* algorithm to find the path from start node to the end node.
+        /// It uses the weight of the nodes to find the best path, 
+        /// and also the distance from each node to the goal.
         /// </summary>
         /// <param name="start">The first node to start the search</param>
         /// <param name="end">The goal node that want to be found from start</param>
@@ -65,8 +66,9 @@ namespace Ignita.Pathfinding
                         if (!exploration.ContainsKey(neighborNode)) //If is the first time to be explored
                         {
                             neighborNode.Cost = cost;
-                            frontier.Insert(neighborNode);
+                            neighborNode.HeuristicValue = EuclidianDistance(neighbor, end); //Calculate the distance once
                             exploration.Add(neighborNode, exploringNode); //Add: neighborNode explored from exploringNode
+                            frontier.Insert(neighborNode);
                         }
                         else //Already explored
                         { //Compares if this path cost less
@@ -102,6 +104,10 @@ namespace Ignita.Pathfinding
             return path.ToArray();
         }
 
+        private float EuclidianDistance(INode node, INode goal)
+        {
+            return (node.Position - goal.Position).magnitude;
+        }
 
         private PathfinderNode GetPathfinderNode(INode node)
         {

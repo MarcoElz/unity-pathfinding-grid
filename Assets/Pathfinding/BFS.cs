@@ -27,7 +27,7 @@ namespace Ignita.Pathfinding
         public INode[] GetPath() { return path.ToArray(); }
 
         /// <summary>
-        /// Using Breadth First Search algorithm finds the path from start node to the end node.
+        /// Using Breadth First Search algorithm to find the path from start node to the end node.
         /// </summary>
         /// <param name="start">The first node to start the search</param>
         /// <param name="end">The goal node that want to be found from start</param>
