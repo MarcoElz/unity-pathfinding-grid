@@ -60,8 +60,9 @@ namespace Ignita.Pathfinding.Demo
             }
 
             //Move Camera
-            Camera.main.transform.position = new Vector3(width / 2f - 0.5f, 10f, height / 2f - 0.5f);
-            Camera.main.orthographicSize = width > height ? width / 2f : height / 2f;
+            int offsetheight = height + Mathf.RoundToInt(((float)height/10f * 3f));
+            Camera.main.transform.position = new Vector3(width / 2f - 0.5f, 10f, offsetheight / 2f - 0.5f);
+            Camera.main.orthographicSize = width > height ? width / 2f : offsetheight / 2f;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Ignita.Pathfinding.Demo
 
         private void OnMouseDown()
         {
-            if (!DemoManager.Instance.CanPaint())
+            if (!DemoManager.Instance.CanEditNode())
                 return;
 
             ChangeType();
@@ -29,7 +29,7 @@ namespace Ignita.Pathfinding.Demo
 
         private void OnMouseEnter()
         {
-            if (!DemoManager.Instance.CanPaint())
+            if (!DemoManager.Instance.CanEditNode())
                 return;
 
             if (Input.GetMouseButton(0))
@@ -48,6 +48,12 @@ namespace Ignita.Pathfinding.Demo
             type = (NodeDemoType)newType;
             PaintByType();
 
+        }
+
+        public void ResetType()
+        {
+            type = 0;
+            PaintByType();
         }
 
         public void PaintByType()
