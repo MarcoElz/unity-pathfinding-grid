@@ -40,7 +40,7 @@ namespace Ignita.Pathfinding
         /// <returns>Returns the path as an array of INodes. If there is not an available path, the array will be empty</returns>
         public INode[] CalculatePath(INode start, INode end)
         {
-            PathfinderNode startNode = GetPathfinderNode(start);
+            PathfinderNode startNode = PathfinderNode.GetPathfinderNodeOrCreateNew(nodes, start);
 
             frontier.Insert(startNode);
             exploration.Add(startNode, startNode);
@@ -58,7 +58,7 @@ namespace Ignita.Pathfinding
 
                     if (neighbor.IsVisitable)
                     {
-                        PathfinderNode neighborNode = GetPathfinderNode(neighbor);
+                        PathfinderNode neighborNode = PathfinderNode.GetPathfinderNodeOrCreateNew(nodes, neighbor);
 
                         float cost = exploringNode.Cost + neighbor.Weight;
 
@@ -100,20 +100,6 @@ namespace Ignita.Pathfinding
             }
 
             return path.ToArray();
-        }
-
-
-        private PathfinderNode GetPathfinderNode(INode node)
-        {
-            //Return the element if exists
-            if (nodes.ContainsKey(node))
-                return nodes[node];
-
-            //Create the element
-            PathfinderNode pathfinderNode = new PathfinderNode(node);
-            nodes.Add(node, pathfinderNode);
-
-            return pathfinderNode;
         }
     }
 }

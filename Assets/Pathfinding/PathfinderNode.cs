@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Ignita.Pathfinding
 {
@@ -33,6 +34,20 @@ namespace Ignita.Pathfinding
         {
             if (other == null) return 1;
             return (Cost+HeuristicValue).CompareTo(other.Cost + other.HeuristicValue);
+        }
+
+
+        public static PathfinderNode GetPathfinderNodeOrCreateNew(Dictionary<INode, PathfinderNode> dictionary, INode node)
+        {
+            //Return the element if exists
+            if (dictionary.ContainsKey(node))
+                return dictionary[node];
+
+            //Create the element
+            PathfinderNode pathfinderNode = new PathfinderNode(node);
+            dictionary.Add(node, pathfinderNode);
+
+            return pathfinderNode;
         }
     }
 }

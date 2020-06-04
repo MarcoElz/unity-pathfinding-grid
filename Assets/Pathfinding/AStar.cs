@@ -41,7 +41,7 @@ namespace Ignita.Pathfinding
         /// <returns>Returns the path as an array of INodes. If there is not an available path, the array will be empty</returns>
         public INode[] CalculatePath(INode start, INode end)
         {
-            PathfinderNode startNode = GetPathfinderNode(start);
+            PathfinderNode startNode = PathfinderNode.GetPathfinderNodeOrCreateNew(nodes, start);
 
             frontier.Insert(startNode);
             exploration.Add(startNode, startNode);
@@ -59,14 +59,14 @@ namespace Ignita.Pathfinding
 
                     if (neighbor.IsVisitable)
                     {
-                        PathfinderNode neighborNode = GetPathfinderNode(neighbor);
+                        PathfinderNode neighborNode = PathfinderNode.GetPathfinderNodeOrCreateNew(nodes, neighbor);
 
                         float cost = exploringNode.Cost + neighbor.Weight;
 
                         if (!exploration.ContainsKey(neighborNode)) //If is the first time to be explored
                         {
                             neighborNode.Cost = cost;
-                            neighborNode.HeuristicValue = EuclidianDistance(neighbor, end); //Calculate the distance once
+                            neighborNode.HeuristicValue = Heuristic.EuclidianDistance(neighbor, end); //Calculate the distance once
                             exploration.Add(neighborNode, exploringNode); //Add: neighborNode explored from exploringNode
                             frontier.Insert(neighborNode);
                         }
@@ -104,22 +104,6 @@ namespace Ignita.Pathfinding
             return path.ToArray();
         }
 
-        private float EuclidianDistance(INode node, INode goal)
-        {
-            return (node.Position - goal.Position).magnitude;
-        }
-
-        private PathfinderNode GetPathfinderNode(INode node)
-        {
-            //Return the element if exists
-            if (nodes.ContainsKey(node))
-                return nodes[node];
-
-            //Create the element
-            PathfinderNode pathfinderNode = new PathfinderNode(node);
-            nodes.Add(node, pathfinderNode);
-
-            return pathfinderNode;
-        }
+        
     }
 }
